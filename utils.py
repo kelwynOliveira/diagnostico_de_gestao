@@ -125,3 +125,4 @@ def get_result_json(file_path):
     except Exception as e:
         print(f"An error occurred: {e}")
         return None
+
