@@ -1,6 +1,8 @@
 import streamlit as st
 from utils import *
 from pathlib import Path
+from datetime import datetime
+import pytz
 
 # Pages
 from page.page_about import *
@@ -79,6 +81,9 @@ def main():
         # Save on spreadsheet
         user_data = st.session_state.answers[0]
         user_data.update({"Categoria": categoria, "Perfil": perfil_final, "Incomoda": st.session_state.answers[3]["Incomoda"]})
+        br_tz = pytz.timezone('America/Sao_Paulo')
+        user_data.update({"date": datetime.now(br_tz).strftime("%Y-%m-%d %H:%M:%S")})
+        # user_data.update({"date": time.strftime("%Y-%m-%d %H:%M:%S")})
         save_on_spreadsheet(user_data)
 
         # Send Email user
@@ -123,7 +128,8 @@ def main():
             subject = 'Nova submissão de Diagnóstico de Gestão'
             body = f'''{user_data['name']} acabou de preencher o formulário de Diagnóstico de Gestão.<br>
             Email: {user_data['email']} <br>
-            Telefone: {user_data['phone']}
+            Telefone: {user_data['phone']} <br>
+            Folder: https://drive.google.com/drive/folders/{st.secrets["folder_id"]} <br>
             '''
             send_email(email_to, subject, body)
         except Exception as e:
