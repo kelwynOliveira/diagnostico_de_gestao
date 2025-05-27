@@ -10,6 +10,9 @@ from page.page_business_focus import *
 from page.page_result import *
 from classify import *
 
+def next_page():
+    st.session_state.page += 1
+
 def main():
     st.set_page_config(page_title="Diagnóstico de Gestão", layout="centered")
     st.title("Diagnóstico de Gestão Express")
@@ -24,7 +27,7 @@ def main():
     # Página Sobre
     if st.session_state.page == 0:
         name, email, phone = about_page()
-        if st.button("Próximo"):
+        if st.button("Próximo", key="about_next"):
             valid_email, msg_email = validate_email(email)
             valid_phone, msg_phone = validate_phone(phone)
 
@@ -36,28 +39,34 @@ def main():
                 st.warning(msg_phone)
             else:
                 st.session_state.answers.append({"name": name, "email": email, "phone": phone})
-                st.session_state.page += 1
+                next_page()
+                st.rerun()
+                
 
     # Página Fase do Negócio
     elif st.session_state.page == 1:
         answers = page_business_phase()
-        if st.button("Próximo", key="phase"):
+        if st.button("Próximo", key="phase_next"):
             st.session_state.answers.append(answers)
-            st.session_state.page += 1
+            next_page()
+            st.rerun()
+            
 
     # Página Gestão e Autonomia
     elif st.session_state.page == 2:
         answers = page_management_autonomy()
-        if st.button("Próximo", key="management"):
+        if st.button("Próximo", key="management_next"):
             st.session_state.answers.append(answers)
-            st.session_state.page += 1
+            next_page()
+            st.rerun()
 
     # Foco do Empresário
     elif st.session_state.page == 3:
         perfil, incomoda = page_business_focus()
-        if st.button("Finalizar"):
+        if st.button("Finalizar", key="focus_next"):
             st.session_state.answers.append(({"Perfil": perfil, "Incomoda": incomoda}))
-            st.session_state.page += 1
+            next_page()
+            st.rerun()
     
     # Result
     elif st.session_state.page == 4:

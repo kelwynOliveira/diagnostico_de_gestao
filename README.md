@@ -4,7 +4,7 @@
 
 A Streamlit web application for business owners to assess their management maturity and receive a personalized action plan. The app collects user information, guides them through a short diagnostic, classifies their business phase and management profile, and delivers tailored recommendations via the interface and email.
 
-Streamlit app link: [Diagnostico de gestão Express]()
+Streamlit app link: [Diagnostico de gestão Express](https://diagnosticodegestao.streamlit.app/)
 
 ---
 
