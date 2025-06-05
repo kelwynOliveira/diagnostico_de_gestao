@@ -49,6 +49,7 @@ def main():
     elif st.session_state.page == 1:
         answers = page_business_phase()
         if st.button("Próximo", key="phase_next"):
+            # print(answers)
             st.session_state.answers.append(answers)
             next_page()
             st.rerun()
@@ -58,6 +59,7 @@ def main():
     elif st.session_state.page == 2:
         answers = page_management_autonomy()
         if st.button("Próximo", key="management_next"):
+            # print(answers)
             st.session_state.answers.append(answers)
             next_page()
             st.rerun()
@@ -73,14 +75,20 @@ def main():
     # Result
     elif st.session_state.page == 4:
         st.balloons()
-        answers_data = [st.session_state.answers[1],st.session_state.answers[2]]
+        # print(st.session_state.answers)
+        answers_data = [st.session_state.answers[1][1],st.session_state.answers[2][1]]
+        # print(answers_data)
         categoria = result(answers_data)
         perfil_final = st.session_state.answers[3]["Perfil"]
         page_result(categoria, perfil_final)
 
-        # Save on spreadsheet
+
+        # # Save on spreadsheet
         user_data = st.session_state.answers[0]
+        user_data.update(st.session_state.answers[1][0])
+        user_data.update(st.session_state.answers[2][0])
         user_data.update({"Categoria": categoria, "Perfil": perfil_final, "Incomoda": st.session_state.answers[3]["Incomoda"]})
+        # print(user_data)
         br_tz = pytz.timezone('America/Sao_Paulo')
         user_data.update({"date": datetime.now(br_tz).strftime("%Y-%m-%d %H:%M:%S")})
         # user_data.update({"date": time.strftime("%Y-%m-%d %H:%M:%S")})

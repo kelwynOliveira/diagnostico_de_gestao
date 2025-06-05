@@ -5,6 +5,7 @@ def page_business_phase() -> list:
     # st.write("Ajuda a entender maturidade, tração e nível de complexidade atual")
     st.divider()
 
+    questions = {}
     answers = []
     st.markdown("**1. Seu negócio já fatura, com recorrência, mais de R$ 100 mil por mês?**")
     question1 = st.radio("1. Seu negócio já fatura +R$ 100 mil/mês?", 
@@ -13,6 +14,7 @@ def page_business_phase() -> list:
     ("Já fazemos +R$ 100 mil por mês há pelo menos 6 meses", 2)], 
     format_func=lambda x: x[0],
     label_visibility="collapsed")
+    questions.update({"Seu negócio já fatura, com recorrência, mais de R$ 100 mil por mês?": question1[0]})
     answers.append(question1[1])
 
     st.markdown("**2. Sua oferta é validada e já vendeu pelo menos 3 vezes no mesmo formato?**")
@@ -22,6 +24,7 @@ def page_business_phase() -> list:
     ("Já vendi o mesmo produto com a mesma estratégia pelo menos 3 vezes e tive resultados consistentes. Minha oferta é validada!", 2)], 
     format_func=lambda x: x[0],
     label_visibility="collapsed")
+    questions.update({"Sua oferta é validada e já vendeu pelo menos 3 vezes no mesmo formato?": question2[0]})
     answers.append(question2[1])
 
     st.markdown("**3. Quantas pessoas trabalham com você de maneira recorrente (mesmo que freelancer)?**")
@@ -32,6 +35,7 @@ def page_business_phase() -> list:
     ("Além de mim, já tenho mais de 4 pessoas na minha equipe", 2)],
     format_func=lambda x: x[0],
     label_visibility="collapsed")
+    questions.update({"Quantas pessoas trabalham com você de maneira recorrente (mesmo que freelancer)?": question3[0]})
     answers.append(question3[1])
 
-    return answers
+    return questions, answers
