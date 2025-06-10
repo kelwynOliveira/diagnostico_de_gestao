@@ -1,0 +1,56 @@
+name: Deploy with Docker on Cloud Run
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Code checkout
+        uses: actions/checkout@v3
+
+      - name: Create .streamlit/secrets.toml
+        run: |
+          mkdir -p .streamlit
+          echo "EMAIL_HOST = '${{ secrets.EMAIL_HOST }}'" >> .streamlit/secrets.toml
+          echo "EMAIL_APP_PASSWORD = '${{ secrets.EMAIL_APP_PASSWORD }}'" >> .streamlit/secrets.toml
+          echo "folder_id = '${{ secrets.FOLDER_ID }}'" >> .streamlit/secrets.toml
+          echo "sheet_name = '${{ secrets.SHEET_NAME }}'" >> .streamlit/secrets.toml
+          echo "spreadsheet_name = '${{ secrets.SPREADSHEET_NAME }}'" >> .streamlit/secrets.toml
+          echo "[gcp_service_account]" >> .streamlit/secrets.toml
+          echo "type = '${{ secrets.GCP_TYPE }}'" >> .streamlit/secrets.toml
+          echo "project_id = '${{ secrets.GCP_PROJECT_ID }}'" >> .streamlit/secrets.toml
+          echo "private_key_id = '${{ secrets.GCP_PRIVATE_KEY_ID }}'" >> .streamlit/secrets.toml
+          echo "private_key = '${{ secrets.GCP_PRIVATE_KEY }}'" >> .streamlit/secrets.toml
+          echo "client_email = '${{ secrets.GCP_CLIENT_EMAIL }}'" >> .streamlit/secrets.toml
+          echo "client_id = '${{ secrets.GCP_CLIENT_ID }}'" >> .streamlit/secrets.toml
+          echo "auth_uri = '${{ secrets.GCP_AUTH_URI }}'" >> .streamlit/secrets.toml
+          echo "token_uri = '${{ secrets.GCP_TOKEN_URI }}'" >> .streamlit/secrets.toml
+          echo "auth_provider_x509_cert_url = '${{ secrets.GCP_AUTH_PROVIDER_CERT_URL }}'" >> .streamlit/secrets.toml
+          echo "client_x509_cert_url = '${{ secrets.GCP_CLIENT_CERT_URL }}'" >> .streamlit/secrets.toml
+          >> .streamlit/secrets.toml
+          echo "universe_domain = '${{ secrets.GCP_UNIVERSE_DOMAIN }}'" >> .streamlit/secrets.toml
+
+      - name: Set up Google Cloud SDK
+        uses: google-github-actions/setup-gcloud@v2
+        with:
+          project_id: ${{ secrets.GCP_PROJECT_ID }}
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          export_default_credentials: true
+
+      - name: Build Docker image
+        run: |
+          gcloud builds submit --tag gcr.io/${{ secrets.GCP_PROJECT_ID }}/diagnostico-app
+
+      - name: Deploy to Cloud Run
+        run: |
+          gcloud run deploy diagnostico-app \
+            --image gcr.io/${{ secrets.GCP_PROJECT_ID }}/diagnostico-app \
+            --platform managed \
+            --region us-central1 \
+            --allow-unauthenticated \
+            --port 8501
