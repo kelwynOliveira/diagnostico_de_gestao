@@ -35,6 +35,10 @@ jobs:
           >> .streamlit/secrets.toml
           echo "universe_domain = '${{ secrets.GCP_UNIVERSE_DOMAIN }}'" >> .streamlit/secrets.toml
 
+      - name: List .streamlit directory contents
+        run: |
+          ls -l .streamlit
+
       - name: Set up Google Cloud SDK
         # uses: google-github-actions/setup-gcloud@v2
         uses: google-github-actions/setup-gcloud@v0.2.0
