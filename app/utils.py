@@ -29,7 +29,7 @@ def validate_phone(phone):
 
 # Save user data to Google Sheets
 def get_spreadsheet():
-    gcp_service_account_info = json.loads(os.getenv("gcp_service_account"))
+    gcp_service_account_info = json.loads(os.getenv("gcp_service_account")) or st.secrets["gcp_service_account"]
 
     creds = service_account.Credentials.from_service_account_info(
         gcp_service_account_info,
@@ -40,8 +40,8 @@ def get_spreadsheet():
     )
     client = gspread.authorize(creds)
 
-    folder_id = os.getenv("folder_id")
-    sheet_name = os.getenv('sheet_name')
+    folder_id = os.getenv("folder_id") or st.secrets["folder_id"]
+    sheet_name = os.getenv('sheet_name') or st.secrets['sheet_name']
 
     try:
         spreadsheet = client.open(sheet_name, folder_id=folder_id)
@@ -63,9 +63,9 @@ def get_spreadsheet():
         ).execute()
     
     try:
-        worksheet = spreadsheet.worksheet(os.getenv('spreadsheet_name'))
+        worksheet = spreadsheet.worksheet(os.getenv('spreadsheet_name') or st.secrets.get("spreadsheet_name"))
     except gspread.exceptions.WorksheetNotFound:
-        worksheet = spreadsheet.add_worksheet(title=os.getenv('spreadsheet_name'), rows=100, cols=20)
+        worksheet = spreadsheet.add_worksheet(title=os.getenv('spreadsheet_name') or st.secrets.get("spreadsheet_name"), rows=100, cols=20)
 
     return worksheet
 
@@ -78,7 +78,7 @@ def save_on_spreadsheet(data):
 
 
 # Send email with user data and results
-def send_email(email_to, subject, body, host_email=os.getenv("EMAIL_HOST"), user_password=os.getenv("EMAIL_APP_PASSWORD"),):
+def send_email(email_to, subject, body, host_email=os.getenv("EMAIL_HOST"), user_password=os.getenv("EMAIL_APP_PASSWORD") or st.secrets.get("EMAIL_APP_PASSWORD"),):
     message = EmailMessage()
     message['From'] = host_email
     message['To'] = email_to

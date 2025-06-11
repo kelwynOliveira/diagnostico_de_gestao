@@ -135,12 +135,12 @@ def main():
         
         # Send Email host
         try:
-            email_to = os.getenv("EMAIL_HOST")
+            email_to = st.secrets.get("EMAIL_HOST") or os.getenv("EMAIL_HOST")
             subject = 'Nova submissão de Diagnóstico de Gestão'
             body = f'''{user_data['name']} acabou de preencher o formulário de Diagnóstico de Gestão.<br>
             Email: {user_data['email']} <br>
             Telefone: {user_data['phone']} <br>
-            Folder: https://drive.google.com/drive/folders/{os.getenv("folder_id")} <br>
+            Folder: https://drive.google.com/drive/folders/{os.getenv("folder_id") or st.secrets.get("folder_id")} <br>
             '''
             send_email(email_to, subject, body)
         except Exception as e:
